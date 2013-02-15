@@ -1,4 +1,5 @@
-cividwnstats
-============
+=======================
+CiviCRM Download Stats
+=======================
 
-Drupal module to show download stats of CiviCRM
+Drupal module which adds a block to show download stats of CiviCRM
