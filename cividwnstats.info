@@ -1,0 +1,8 @@
+; $Id$
+ 
+name = CiviCRM Download Stats
+description = Module to display CiviCRM download stats from sourceforge
+package = CiviCRM
+core = 7.x
+  
+files[] = cividwnstats.module

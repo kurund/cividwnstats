@@ -1,0 +1,36 @@
+<?php
+
+function get_civicrm_download_stats() {
+  // get download stats
+  $today = date('Y-m-d');
+  $response = drupal_http_request('http://sourceforge.net/projects/civicrm/files/stats/json?start_date=2006-09-21&end_date=' . $today);
+  $stats = json_decode($response->data);
+
+  $output = "<h3>Total: {$stats->total}</h3>";
+  $output .= "<em>(this includes alpha, beta and stable releases of CiviCRM<br/>";
+  $output .= "last updated: {$stats->stats_updated}</em>)";
+  return $output;
+}
+
+function cividwnstats_block_info() {
+  // This example comes from node.module.
+  $blocks['cividwnstats'] = array(
+    'info' => t('CiviCRM Download Stats'),
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  return $blocks;
+}
+
+function cividwnstats_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'cividwnstats':
+      $block['subject'] = t('Download Stats');
+      $block['content'] = get_civicrm_download_stats();
+      break;
+  }
+  return $block;
+}
+
+
