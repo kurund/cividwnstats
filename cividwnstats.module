@@ -1,17 +1,26 @@
 <?php
+/**
+ * Add menu item
+ *
+ * @return array
+ */
+function cividwnstats_menu() {
+  $items = array();
+  $items['cividownload/stats'] = array(
+    'title' => 'Download Stats',
+    'page callback' => 'civicrm_download_page',
+    'access arguments' => array('access content'),
+    'type'             => MENU_SUGGESTED_ITEM,
+  );
 
-function get_civicrm_download_stats() {
-  // get download stats
-  $today = date('Y-m-d');
-  $response = drupal_http_request('http://sourceforge.net/projects/civicrm/files/stats/json?start_date=2006-09-21&end_date=' . $today);
-  $stats = json_decode($response->data);
-
-  $output = "<h3>Total: {$stats->total}</h3>";
-  $output .= "<em>(this includes alpha, beta and stable releases of CiviCRM<br/>";
-  $output .= "last updated: {$stats->stats_updated}</em>)";
-  return $output;
+  return $items;
 }
 
+/**
+ * Block info
+ *
+ * @return mixed
+ */
 function cividwnstats_block_info() {
   // This example comes from node.module.
   $blocks['cividwnstats'] = array(
@@ -21,16 +30,49 @@ function cividwnstats_block_info() {
   return $blocks;
 }
 
+/**
+ * Block view / content
+ *
+ * @param string $delta
+ * @return array
+ */
 function cividwnstats_block_view($delta = '') {
   $block = array();
 
   switch ($delta) {
     case 'cividwnstats':
+      $stats = get_civicrm_download_stats();
       $block['subject'] = t('Download Stats');
-      $block['content'] = get_civicrm_download_stats();
+      $block['content'] = format_total_stats($stats);
       break;
   }
   return $block;
 }
 
+function civicrm_download_page() {
+  $stats = get_civicrm_download_stats();
+  return format_total_stats($stats);
+}
 
+/**
+ * Function to get download stats
+ * @return string
+ */
+function get_civicrm_download_stats() {
+  // get download stats
+  $today = date('Y-m-d');
+  $response = drupal_http_request('http://sourceforge.net/projects/civicrm/files/stats/json?start_date=2006-09-21&end_date=' . $today);
+  return json_decode($response->data);
+}
+
+/**
+ * Funtion to get total stat
+ *
+ * @return string
+ */
+function format_total_stats(&$stats) {
+  $output = "<h3>Total: {$stats->total}</h3>";
+  $output .= "<em>(this includes alpha, beta and stable releases of CiviCRM<br/>";
+  $output .= "last updated: {$stats->stats_updated}</em>)";
+  return $output;
+}
